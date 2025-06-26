@@ -1,13 +1,19 @@
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useLocation } from "react-router-dom";
 import HomePage from "./page/user/homePage";
 import { ROUTERS } from "./utils/router";
 import MasterLayout from "./page/user/theme/masterLayout";
+import DashBoard from "./page/admin/dashBoard";
+import GamePage from "./page/user/gamePage";
 
-const renderRouter = () => {
+const renderUserRouter = () => {
   const userRouter = [
     {
       path: ROUTERS.USER.HOME,
       component: <HomePage />,
+    },
+    {
+      path: ROUTERS.USER.GAMES,
+      component: <GamePage />,
     },
   ];
   return (
@@ -23,8 +29,31 @@ const renderRouter = () => {
   );
 };
 
+const renderAdminRouter = () => {
+  const adminRouter = [
+    {
+      path: ROUTERS.ADMIN.DASHBOARD,
+      component: <DashBoard />,
+    },
+  ];
+  return (
+    <Routes>
+      {adminRouter.map((item, key) => {
+        return (
+          <>
+            <Route key={key} path={item.path} element={item.component}></Route>
+          </>
+        );
+      })}
+    </Routes>
+  );
+};
+
 const RouterCustom = () => {
-  return renderRouter();
+  const location = useLocation();
+  const isAdminRoute = location.pathname.startsWith("/admin");
+
+  return isAdminRoute ? renderAdminRouter() : renderUserRouter();
 };
 
 export default RouterCustom;

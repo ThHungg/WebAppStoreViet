@@ -1,4 +1,4 @@
-import React, { memo, useState } from "react";
+import React, { memo, useEffect, useState } from "react";
 import logo from "../../../../assets/img/header/logo.png";
 import { CgGames } from "react-icons/cg";
 import { BsBag } from "react-icons/bs";
@@ -12,10 +12,23 @@ import { FiSearch } from "react-icons/fi";
 import { useLocation, useNavigate } from "react-router-dom";
 import Login from "../../../../component/Login";
 import Register from "../../../../component/Register";
+import { useDispatch, useSelector } from "react-redux";
+import { resetUser } from "../../../../redux/slides/userSlide";
 
 const Header = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const user = localStorage.getItem("access_token");
+  // useEffect(() => {
+  //   window.location.reload();
+  // }, []);
+
+  const handleLogOut = () => {
+    dispatch(resetUser());
+    localStorage.removeItem("access_token");
+    window.location.reload();
+  };
 
   const [showLogin, setShowLogin] = useState(false);
   const [showRegister, setShowRegister] = useState(false);
@@ -37,7 +50,7 @@ const Header = () => {
       label: "Giới thiệu",
       path: "",
     },
-    { key: "games", icon: <CgGames />, label: "Games", path: "" },
+    { key: "games", icon: <CgGames />, label: "Games", path: "/games" },
     {
       key: "apps",
       icon: <AiOutlineAppstoreAdd />,
@@ -93,22 +106,36 @@ const Header = () => {
             </div>
           </div>
           {/* <FaRegUserCircle className="w-[22px] h-[22px]"/> */}
-          <div className="gap-[8px] flex items-center">
-            <span
-              className="cursor-pointer text-[14px] font-[SF Pro Display]"
-              onClick={openRegister}
-            >
-              Đăng ký
-            </span>
-            <div className="w-[95px] h-[25px] shadow-2xl bg-gradient-to-r from-[#4B91F7] to-[#367AF6] rounded-md flex items-center justify-center cursor-pointer">
+          {user ? (
+            <>
+              {" "}
               <span
-                className="text-white text-[14px] font-[SF Pro Display] "
-                onClick={openLogin}
+                className="cursor-pointer text-[14px] font-[SF Pro Display]"
+                onClick={handleLogOut}
               >
-                Đăng nhập
+                Đăng xuất
               </span>
-            </div>
-          </div>
+            </>
+          ) : (
+            <>
+              <div className="gap-[8px] flex items-center">
+                <span
+                  className="cursor-pointer text-[14px] font-[SF Pro Display]"
+                  onClick={openRegister}
+                >
+                  Đăng ký
+                </span>
+                <div className="w-[95px] h-[25px] shadow-2xl bg-gradient-to-r from-[#4B91F7] to-[#367AF6] rounded-md flex items-center justify-center cursor-pointer">
+                  <span
+                    className="text-white text-[14px] font-[SF Pro Display] "
+                    onClick={openLogin}
+                  >
+                    Đăng nhập
+                  </span>
+                </div>
+              </div>
+            </>
+          )}
         </div>
       </div>
       {showLogin && (

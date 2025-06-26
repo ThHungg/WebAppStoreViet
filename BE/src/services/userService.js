@@ -82,10 +82,32 @@ const getAllUser = () => {
     })
 }
 
+const getDetailUser = (userId) => { 
+    return new Promise(async (resolve, reject) => {
+        try {
+            const user = await User.findById(userId)
+            if (!user) {
+                return resolve({
+                    status: "Err",
+                    message: "Không tìm thấy thông tin người dùng"
+                })
+            }
+            resolve({
+                status: "Ok",
+                message: "Lấy thông tin tài khoản thành công",
+                user
+            })
+        } catch (e) {
+            reject(e)
+        }
+    })
+}
+
 
 
 module.exports = {
     createUser,
     loginUser,
-    getAllUser
+    getAllUser,
+    getDetailUser
 }

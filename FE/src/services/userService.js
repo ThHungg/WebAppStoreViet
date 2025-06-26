@@ -13,5 +13,10 @@ export const registerUser = async (data) => {
 
 export const getAllUser = async () => {
     const res = await axios.post(`${import.meta.env.VITE_API_URL}/user/getAllUser`)
-    return res
+    return res.data
+}
+
+export const getDetailUser = async (userId) => {
+    const res = await axios.get(`${import.meta.env.VITE_API_URL}/user/getDetailUser/${userId}`)
+    return res.data
 }

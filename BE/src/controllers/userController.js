@@ -1,5 +1,6 @@
 const { json } = require('body-parser');
 const userService = require('../services/userService')
+const jwtService = require('../services/jwtService')
 const createUser = async (req, res) => {
     try {
         const regEmail = /^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/;
@@ -36,7 +37,7 @@ const createUser = async (req, res) => {
     } catch (e) {
         console.log(e)
         return res.status(404).json({
-            message: "Lỗi hệ thống vui lòng thử lại sau"
+            message: "Lỗi hệ thống vui lòng thử lại sau!"
         })
     }
 }
@@ -80,6 +81,19 @@ const getAllUser = async (req, res) => {
         const response = await userService.getAllUser()
         return res.status(200).json(response)
     } catch (e) {
+        return res.status(404).json({
+            status: "Err",
+            message: "Lỗi hệ thống vui lòng thử lại sau"
+        })
+    }
+}
+
+const getDetailUser = async (req, res) => {
+    try {
+        const userId = req.params.userId
+        const response = await userService.getDetailUser(userId)
+        return res.status(200).json(response)
+    } catch (e) {
         console.log(e)
         return res.status(404).json({
             status: "Err",
@@ -88,8 +102,28 @@ const getAllUser = async (req, res) => {
     }
 }
 
+const refreshToken = async (req, res) => {
+    try {
+        const token = req.cookies.refresh_token
+        if (!token) {
+            return res.status(200).json({
+                status: "Err",
+                message: "Không tìm thấy token"
+            })
+        }
+        const response = await jwtService.refreshTokenJwtService(token)
+        return res.status(200).json(response)
+    } catch (e) {
+        return res.status(404).json({
+            message: 'Lỗi hệ thống, vui lòng thử lại sau!'
+        });
+    }
+}
+
 module.exports = {
     createUser,
     loginUser,
-    getAllUser
+    getAllUser,
+    refreshToken,
+    getDetailUser
 }

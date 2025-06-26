@@ -1,26 +1,54 @@
-import { memo, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import logo from "../../assets/img/Login/appStoreViet.png";
 import { useMutationHooks } from "../../hooks/useMutation";
 import * as userServices from "../../services/userService";
 import { toast, ToastContainer } from "react-toastify";
+import { jwtDecode } from "jwt-decode";
+import { useDispatch } from "react-redux";
+import { updateUser } from "../../redux/slides/userSlide";
 
 const LoginModal = ({ onClose, onOpenRegister }) => {
   const [errors, setErrors] = useState(false);
+  const dispatch = useDispatch();
   const mutation = useMutationHooks((data) => userServices.loginUser(data), {
     onSuccess: (data) => {
       if (data.status === "Ok") {
         toast.success(data.message);
-        console.log("Data", data);
+        setTimeout(() => {
+          onClose();
+          // location.window.reload();
+        }, 1000);
+        localStorage.setItem(
+          "access_token",
+          JSON.stringify(data?.access_token)
+        );
       } else {
         toast.error(data.message);
       }
     },
     onError: (error) => {
+      console.log(error);
       const errMsg =
         error?.response?.data?.message || "Có lỗi xảy ra vui lòng thử lại sau!";
       toast.error(errMsg);
     },
   });
+
+  useEffect(() => {
+    const access_token = localStorage.getItem("access_token");
+    if (access_token) {
+      const decoded = jwtDecode(access_token);
+      handleGetDetailUser(decoded?.id, access_token);
+    }
+  });
+
+  const handleGetDetailUser = async (userId, token) => {
+    const res = await userServices.getDetailUser(userId);
+    const userData = { ...res?.user, access_token: token, id: userId };
+    dispatch(updateUser(userData));
+    // const reduxData = JSON.stringify({ userData });
+    // localStorage.setItem("reduxData", reduxData);
+  };
 
   const [formData, setFormData] = useState({
     email: "",
