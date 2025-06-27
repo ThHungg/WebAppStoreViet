@@ -1,6 +1,7 @@
 const { json } = require('body-parser');
 const userService = require('../services/userService')
-const jwtService = require('../services/jwtService')
+const jwtService = require('../services/jwtService');
+const User = require('../models/User');
 const createUser = async (req, res) => {
     try {
         const regEmail = /^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/;
@@ -35,7 +36,6 @@ const createUser = async (req, res) => {
         const response = await userService.createUser(req.body)
         return res.status(200).json(response)
     } catch (e) {
-        console.log(e)
         return res.status(404).json({
             message: "Lỗi hệ thống vui lòng thử lại sau!"
         })
@@ -45,7 +45,9 @@ const createUser = async (req, res) => {
 const loginUser = async (req, res) => {
     try {
         const reg = /^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/;
-        const { userName, passWord, email } = req.body;
+        console.log(req.body)
+        const { passWord, email } = req.body;
+
         const isCheckEmail = reg.test(email)
         if (!email || !passWord) {
             return res.status(400).json({
@@ -120,10 +122,77 @@ const refreshToken = async (req, res) => {
     }
 }
 
+const sendOtp = async (req, res) => {
+    try {
+        const { email } = req.body
+        if (!email) {
+            return res.status(400).json({
+                status: "Err",
+                message: "Vui lòng nhập email"
+            })
+        }
+        const response = await userService.sendOtp(email)
+        return res.status(200).json(response)
+    } catch (e) {
+        return res.status(404).json({
+            message: 'Lỗi hệ thống, vui lòng thử lại sau!'
+        });
+    }
+}
+
+const verifyOtp = async (req, res) => {
+    try {
+        const { otp, email } = req.body
+        if (!otp) {
+            return res.status(400).json({
+                status: "Err",
+                message: "Vui lòng nhập mã OTP!"
+            })
+        }
+        const response = await userService.verifyOtp(req.body)
+        return res.status(200).json(response)
+    } catch (e) {
+        return res.status(404).json({
+            message: 'Lỗi hệ thống, vui lòng thử lại sau!'
+        });
+    }
+}
+
+const checkAccount = async (req, res) => {
+    try {
+        console.log(req.body)
+        const { email, passWord } = req.body
+        if (!email) {
+            return res.status(400).json({
+                status: "Err",
+                message: "Vui lòng nhập tài khoản"
+            })
+        }
+        if (!passWord) {
+            return res.status(400).json({
+                status: "Err",
+                message: "Vui lòng nhập mật khẩu"
+            })
+        }
+        const response = await userService.checkAccount(req.body)
+        return res.status(200).json(response)
+    } catch (e) {
+        console.log(e)
+        return res.status(404).json({
+            message: 'Lỗi hệ thống, vui lòng thử lại sau!'
+        });
+    }
+}
+
+
+
 module.exports = {
     createUser,
     loginUser,
     getAllUser,
     refreshToken,
-    getDetailUser
+    getDetailUser,
+    sendOtp,
+    verifyOtp,
+    checkAccount
 }

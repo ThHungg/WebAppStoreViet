@@ -169,7 +169,7 @@ const Register = ({ onClose, onOpenLogin }) => {
           </div>
         </div>
       </div>
-      {showLogin && <Login onClose={() => setShowLogin(false)} />}
+      {/* {showLogin && <Login onClose={() => setShowLogin(false)} />} */}
       <ToastContainer position="top-right" autoClose={3000} />
     </>
   );

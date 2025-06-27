@@ -4,6 +4,7 @@ import { ROUTERS } from "./utils/router";
 import MasterLayout from "./page/user/theme/masterLayout";
 import DashBoard from "./page/admin/dashBoard";
 import GamePage from "./page/user/gamePage";
+import MasterLayoutAd from "./page/admin/theme/masterLayoutAd";
 
 const renderUserRouter = () => {
   const userRouter = [
@@ -37,15 +38,21 @@ const renderAdminRouter = () => {
     },
   ];
   return (
-    <Routes>
-      {adminRouter.map((item, key) => {
-        return (
-          <>
-            <Route key={key} path={item.path} element={item.component}></Route>
-          </>
-        );
-      })}
-    </Routes>
+    <MasterLayoutAd>
+      <Routes>
+        {adminRouter.map((item, key) => {
+          return (
+            <>
+              <Route
+                key={key}
+                path={item.path}
+                element={item.component}
+              ></Route>
+            </>
+          );
+        })}
+      </Routes>
+    </MasterLayoutAd>
   );
 };
 

@@ -14,6 +14,9 @@ import Login from "../../../../component/Login";
 import Register from "../../../../component/Register";
 import { useDispatch, useSelector } from "react-redux";
 import { resetUser } from "../../../../redux/slides/userSlide";
+import Authen from "../../../../component/Authen";
+import OtpForm from "../../../../component/otpForm";
+import { Icon } from "@iconify/react/dist/iconify.js";
 
 const Header = () => {
   const location = useLocation();
@@ -32,15 +35,35 @@ const Header = () => {
 
   const [showLogin, setShowLogin] = useState(false);
   const [showRegister, setShowRegister] = useState(false);
+  const [showAuthen, setShowAuthen] = useState(false);
+  const [showOtpForm, setShowOtpForm] = useState(false);
 
   const openLogin = () => {
     setShowLogin(true);
     setShowRegister(false);
+    setShowAuthen(false);
+    setShowOtpForm(false);
   };
 
   const openRegister = () => {
     setShowRegister(true);
     setShowLogin(false);
+    setShowAuthen(false);
+    setShowOtpForm(false);
+  };
+
+  const openAuthen = () => {
+    setShowAuthen(true);
+    setShowLogin(false);
+    setShowRegister(false);
+    setShowOtpForm(false);
+  };
+
+  const openOtpForm = () => {
+    setShowAuthen(false);
+    setShowLogin(false);
+    setShowRegister(false);
+    setShowOtpForm(true);
   };
 
   const menuItems = [
@@ -109,12 +132,14 @@ const Header = () => {
           {user ? (
             <>
               {" "}
-              <span
+              {/* <span
                 className="cursor-pointer text-[14px] font-[SF Pro Display]"
                 onClick={handleLogOut}
               >
                 Đăng xuất
-              </span>
+              </span> */}
+              <Icon icon="bx:user"
+              onClick={handleLogOut} />
             </>
           ) : (
             <>
@@ -142,12 +167,26 @@ const Header = () => {
         <Login
           onClose={() => setShowLogin(false)}
           onOpenRegister={openRegister}
+          onOpenAuthen={openAuthen}
         />
       )}
       {showRegister && (
         <Register
           onClose={() => setShowRegister(false)}
           onOpenLogin={openLogin}
+        />
+      )}
+      {showAuthen && (
+        <Authen
+          onClose={() => setShowAuthen(false)}
+          onOpenLogin={openLogin}
+          onOpenOtpForm={openOtpForm}
+        />
+      )}
+      {showOtpForm && (
+        <OtpForm
+          onClose={() => setShowOtpForm(false)}
+          onOpenAuthen={openAuthen}
         />
       )}
     </>
